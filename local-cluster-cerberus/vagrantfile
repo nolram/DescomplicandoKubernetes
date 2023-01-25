@@ -1,5 +1,5 @@
 VAGRANTFILE_API_VERSION = "2"
-MEMORY = 2048
+MEMORY = 4000
 CPU_CORE = 2
 MASTER_NODE = "elliot-01"
 
@@ -36,19 +36,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.memory = MEMORY
         vb.cpus = CPU_CORE
       end
-      # if node.vm.hostname == MASTER_NODE then
-      #   node.vm.provision "k8s-init-cluster",
-      #   type: "shell",
-      #   preserve_order: true,
-      #   path: "scripts/k8s-init-cluster.sh"
-      #   node.vm.synced_folder "token-vm-k8s", "/home/vagrant/token"
-      # else
-      #   node.vm.provision "file", source: "token-vm-k8s/.token_join", destination: "/home/vagrant/.token_join"
-      #   node.vm.provision "node-join-in-cluster",
-      #     type: "shell",
-      #     preserve_order: true,
-      #     inline: "cat /home/vagrant/.token_join | bash"
-      # end
+      if node.vm.hostname == MASTER_NODE then
+        node.vm.provision "k8s-init-cluster",
+        type: "shell",
+        preserve_order: true,
+        path: "scripts/k8s-init-cluster.sh"
+        node.vm.synced_folder "token-vm-k8s", "/home/vagrant/token"
+      else
+        node.vm.provision "file", source: "token-vm-k8s/.token_join", destination: "/home/vagrant/.token_join"
+        node.vm.provision "node-join-in-cluster",
+          type: "shell",
+          preserve_order: true,
+          inline: "cat /home/vagrant/.token_join | bash"
+      end
     end
   end
 end
