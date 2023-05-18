@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KUBERNETES_VERSION="1.26.1-00"
+KUBERNETES_VERSION="1.27.1-00"
 
 # Kubernetes config
 echo "Add kubernetes repository..."

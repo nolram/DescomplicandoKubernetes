@@ -24,7 +24,7 @@ sleep 10
 
 # calico
 echo "Should now deploy a pod network to the cluster..."
-kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml
 
 
 # echo "List Nodes..."
