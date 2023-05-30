@@ -1,6 +1,6 @@
 VAGRANTFILE_API_VERSION = "2"
-MEMORY = 4000
-CPU_CORE = 2
+MEMORY = 8000
+CPU_CORE = 4
 MASTER_NODE = "elliot-01"
 
 INET_IFACE="enp6s0"
@@ -40,13 +40,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         node.vm.provision "k8s-init-cluster",
         type: "shell",
         preserve_order: true,
-        path: "scripts/k8s-init-cluster.sh"
+        path: "scripts/k8s-init-cluster.sh",
+        env: { "HOST_IP" => "192.168.56.#{i}0" }
         node.vm.synced_folder "token-vm-k8s", "/home/vagrant/token"
       else
         node.vm.provision "file", source: "token-vm-k8s/.token_join", destination: "/home/vagrant/.token_join"
         node.vm.provision "node-join-in-cluster",
           type: "shell",
           preserve_order: true,
+          env: { "HOST_IP" => "192.168.56.#{i}0" },
           inline: "cat /home/vagrant/.token_join | bash"
       end
     end

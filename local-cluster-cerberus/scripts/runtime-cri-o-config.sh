@@ -1,5 +1,5 @@
 CRIO_OS='xUbuntu_22.04'
-CRIO_VERSION='1.27'
+CRIO_VERSION='1.26'
 
 
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$CRIO_OS/ /"|sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list

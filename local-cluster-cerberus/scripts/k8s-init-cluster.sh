@@ -22,6 +22,14 @@ chown vagrant:vagrant $USER_HOME/.kube/config
 echo "Sleep 10 seconds"
 sleep 10
 
+source /var/lib/kubelet/kubeadm-flags.env
+echo "KUBELET_KUBEADM_ARGS=\"$KUBELET_KUBEADM_ARGS --node-ip=$HOST_IP\"" > /var/lib/kubelet/kubeadm-flags.env
+
+systemctl daemon-reload
+systemctl restart kubelet
+
+echo "Sleep 10 seconds"
+sleep 10
 # calico
 echo "Should now deploy a pod network to the cluster..."
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/manifests/calico.yaml
@@ -51,7 +59,24 @@ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.1/
 echo "Show join token"
 echo "========================================================================="
 JOIN_TOKEN=$(cat token/.token_join |grep -i "kubeadm join" && cat token/.token_join |grep -i "discovery-token-ca-cert-hash")
-echo $JOIN_TOKEN | tr -d '\\' > token/.token_join
+SCRIPT_ARGS=$(cat <<-END
+sleep 10
+source /var/lib/kubelet/kubeadm-flags.env
+echo "KUBELET_KUBEADM_ARGS=\\"\$KUBELET_KUBEADM_ARGS --node-ip=\$HOST_IP\\"" > /var/lib/kubelet/kubeadm-flags.env
+systemctl daemon-reload
+systemctl restart kubelet
+END
+)
+
+SCRIPT_K8S=$(cat <<-END
+
+$JOIN_TOKEN
+
+$SCRIPT_ARGS
+END
+)
+
+echo "$SCRIPT_K8S" > token/.token_join
 cat token/.token_join
 echo "========================================================================="
 
